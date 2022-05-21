@@ -58,7 +58,7 @@ export function createTodoStore() {
           this.todos = JSON.parse(localItem);
         }
       } catch (error) {
-        console.log(error);
+        this.errorMessage = "Failed to get todos";
       } finally {
         this.isLoading = false;
       }

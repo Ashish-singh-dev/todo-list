@@ -43,11 +43,12 @@ const TodoList = () => {
       loading={todoStore.isLoading}
       bordered
       dataSource={todoStore.todos}
-      renderItem={(item) => (
+      renderItem={(item, index) => (
         <List.Item
           key={item.id}
           actions={[
             <Button
+              key={index.toString()}
               size="middle"
               shape="round"
               icon={<DeleteOutlined />}
