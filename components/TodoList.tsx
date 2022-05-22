@@ -1,5 +1,5 @@
 import { Button, Input, List, Space, Typography } from "antd";
-import { observer, useObserver } from "mobx-react-lite";
+import { observer } from "mobx-react-lite";
 import { useEffect, useState } from "react";
 import { useTodoStore } from "../context/TodoContext";
 import { DeleteOutlined } from "@ant-design/icons";
@@ -10,6 +10,10 @@ const { Title, Text } = Typography;
 const TodoList = () => {
   const [value, setValue] = useState("");
   const todoStore = useTodoStore();
+  const [isError, setIsError] = useState({
+    message: "",
+    isOpen: false,
+  });
 
   function createTodo() {
     if (value === "") return;

@@ -1,14 +1,16 @@
 import { useLocalObservable } from "mobx-react-lite";
 import { createContext, ReactNode, useContext } from "react";
-import { createTodoStore, TodoItem } from "../utils/TodoStore";
+import { createTodoStore } from "../utils/TodoStore";
 
 interface TodoContext {
-  todos: TodoItem[];
+  todos: any[];
   isLoading: boolean;
-  addTodo(title: string): void;
-  removeTodo(id: string): void;
+  errorMessage: string;
+  successMessage: string;
+  addTodo(title: string): Promise<void>;
+  removeTodo(id: string): Promise<void>;
   getTodos(): Promise<void>;
-  toggleComplete(id: string, isChecked: boolean): void;
+  toggleComplete(id: string, isChecked: boolean): Promise<void>;
 }
 
 const TodosContext = createContext({} as TodoContext);

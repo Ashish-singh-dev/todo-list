@@ -21,38 +21,56 @@ export function createTodoStore() {
     async addTodo(title: string) {
       this.isLoading = true;
       try {
-        const response = await fetch(`${API}/todo`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
         const item: TodoItem = {
           id: nanoid(),
           title,
           completed: false,
         };
+        const response = await fetch(`${API}/create_todo`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(item),
+        });
         this.todos.push(item);
         setItem(this.todos);
         this.successMessage = "Todo Added";
       } catch (error) {
-        this.errorMessage = "Failed to add todo";
+        this.errorMessage = error.toString();
+        console.error(error);
       } finally {
         this.isLoading = false;
       }
     },
-    removeTodo(id: string) {
-      this.todos = this.todos.filter((todos: TodoItem) => todos.id !== id);
-      setItem(this.todos);
+    async removeTodo(id: string) {
+      this.isLoading = true;
+      try {
+        const response = await fetch(`${API}/todoId=78`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        this.todos = this.todos.filter((todos: TodoItem) => todos.id !== id);
+        setItem(this.todos);
+      } catch (error: unknown) {
+        this.errorMessage = error.toString();
+        console.error(error);
+      } finally {
+        this.isLoading = false;
+      }
     },
     async getTodos() {
       this.isLoading = true;
       try {
-        const response = await fetch(`${API}/todos`).then((res) => res.json());
-        console.log(response);
+        const data = await fetch(`${API}/todos`).then((res) => res.json());
         const localItem = localStorage.getItem("todos");
+        if (data === null || data === undefined) {
+          throw new Error("failed to get todo from server");
+        }
         if (localItem === null || localItem === "") {
-          this.todos = response;
+          this.todos = data;
           setItem(this.todos);
         } else {
           this.todos = JSON.parse(localItem);
@@ -63,16 +81,34 @@ export function createTodoStore() {
         this.isLoading = false;
       }
     },
-    toggleComplete(id: string, isChecked: boolean) {
-      this.todos = this.todos.map((todo: TodoItem) => {
-        if (todo.id === id) {
-          return {
-            ...todo,
-            completed: isChecked,
-          };
-        } else return todo;
-      });
-      setItem(this.todos);
+    async toggleComplete(id: string, isChecked: boolean) {
+      this.isLoading = true;
+      try {
+        const response = await fetch(`${API}/todoId=90`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id,
+            isChecked,
+          }),
+        });
+        this.todos = this.todos.map((todo: TodoItem) => {
+          if (todo.id === id) {
+            return {
+              ...todo,
+              completed: isChecked,
+            };
+          } else return todo;
+        });
+        setItem(this.todos);
+      } catch (error) {
+        this.errorMessage = error.toString();
+        console.error(error);
+      } finally {
+        this.isLoading = false;
+      }
     },
   };
 }
