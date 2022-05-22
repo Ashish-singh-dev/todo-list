@@ -64,13 +64,10 @@ export function createTodoStore() {
     async getTodos() {
       this.isLoading = true;
       try {
-        const data = await fetch(`${API}/todos`).then((res) => res.json());
+        const data = await fetch(`${API}/todos`);
         const localItem = localStorage.getItem("todos");
-        if (data === null || data === undefined) {
-          throw new Error("failed to get todo from server");
-        }
         if (localItem === null || localItem === "") {
-          this.todos = data;
+          this.todos = [];
           setItem(this.todos);
         } else {
           this.todos = JSON.parse(localItem);
